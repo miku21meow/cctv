@@ -1,2 +1,21 @@
 <!---<img src="http://rtmp:1234@122.100.107.90:10190/GetData.cgi?CH=1" width="200">--->
+<script>
+setInterval(function () {
+  document.getElementById("cctv").innerHTML='<img src="http://rtmp:1234@122.100.107.90:10190/GetImage.cgi?CH=1;r=' +Math.random() + '"  width="426" />';
+  
+}, 2500);
+</script>
+<!---程式碼來源：--->
+<!---https://blog.csdn.net/m0_49015921/article/details/123588267--->
+<!---https://www.w3schools.com/jsref/met_document_getelementbyid.asp--->
+<p id="cctv"></p>
+
+
+
+
+
+
+
+
+
 <img width="2592" height="1540" src"http://rtmp:1234@122.100.107.90:10190/GetData.cgi?CH=1">
