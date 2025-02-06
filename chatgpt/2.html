@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自动更新 API 图片</title>
+  <script>
+    // 获取指定的 URL 参数
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 获取 API 数据并更新图片
+    async function fetchAndUpdateImage() {
+      const apiBaseUrl = "https://miku21meow.github.io/cctv/chatgpt/2.json"; // 替换为实际 API 地址
+      const imageId = getQueryParam("imageId"); // 读取 "imageId" 参数
+      const apiUrl = imageId ? `${apiBaseUrl}?imageId=${imageId}` : apiBaseUrl;
+
+      // 更新网页中的 API 链接
+      const apiLinkElement = document.getElementById("apiLink");
+      apiLinkElement.href = apiUrl;
+      apiLinkElement.textContent = apiUrl;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("API 请求失败");
+
+        const data = await response.json(); // 假设 API 返回 JSON 数据
+        const imageUrl = data.imageUrl; // 图片链接字段名为 "imageUrl"
+
+        if (imageUrl) {
+          const imageElement = document.getElementById("apiImage");
+          imageElement.src = `${imageUrl}?timestamp=${new Date().getTime()}`; // 防止缓存
+          imageElement.alt = "API 返回的图片";
+          imageElement.style.display = "block";
+        }
+      } catch (error) {
+        document.getElementById("apiResponse").textContent = `错误: ${error.message}`;
+      }
+    }
+
+    // 每分钟自动更新图片
+    function startImageUpdate() {
+      fetchAndUpdateImage(); // 立即获取一次图片
+      setInterval(fetchAndUpdateImage, 60000); // 每 60 秒更新一次
+    }
+
+    // 页面加载时调用
+    window.onload = startImageUpdate;
+  </script>
+</head>
+<body>
+  <h1>展示与自动更新 API 图片</h1>
+  <p>API 请求地址：<a id="apiLink" href="#" target="_blank">等待生成...</a></p>
+  <p id="apiResponse"></p>
+  <img id="apiImage" src="#" alt="等待图片加载..." style="max-width: 100%; height: auto; display: none;">
+  <p>示例：访问页面时添加参数，如 <code>?imageId=12345</code>。</p>
+</body>
+</html>
