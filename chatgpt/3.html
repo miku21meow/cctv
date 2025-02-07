@@ -46,7 +46,7 @@
         }
         
         setInterval(function () {
-  document.getElementById("cctv").innerHTML='<img src=" (imageUrl)?r=' +Math.random() + '"  width="426" />';
+  document.getElementById("cctv").innerHTML='<img src="`${encodeURIComponent(imageUrl)}`?r=' +Math.random() + '"  width="426" />';
   
 }, 2500);
 
