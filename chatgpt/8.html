@@ -24,8 +24,8 @@
 
         // 假设 API 返回的结构中包含 VideoStreamURL 和其他描述信息
         const cctvData = data[0];
-        const videoUrl = cctvData?.VideoStreamURL;
-        const locationDescription = cctvData?.CCTVID || "未知位置";
+        const videoUrl = data.CCTVs[0].VideoStreamURL;
+        const locationDescription = data.CCTVs[0].CCTVID || "未知位置";
 
         if (videoUrl) {
           // 初始化显示图片和位置信息
