@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交通 CCTV 数据展示</title>
+  <script>
+    // 获取 URL 参数
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 从 API 获取图像及信息并定时更新
+    async function fetchAndDisplayCCTVData() {
+      const cctvId = getQueryParam("cctvId") || "CCTV-14-0620-017-018";
+      const apiUrl = `https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CCTV/Highway/${cctvId}?$top=30&$format=JSON`;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("API 请求失败");
+
+        const data = await response.json();
+
+        // 假设 API 返回的结构中包含 VideoStreamURL 和其他描述信息
+        const cctvData = data[0];
+        const videoUrl = cctvData?.VideoStreamURL;
+        const locationDescription = cctvData?.CCTVID || "未知位置";
+
+        if (videoUrl) {
+          // 初始化显示图片和位置信息
+          document.getElementById("location").textContent = `位置: ${locationDescription}`;
+          document.getElementById("cctv").innerHTML = 
+            `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 图像加载中..." />`;
+
+          // 每隔 5 秒刷新图片
+          setInterval(function () {
+            document.getElementById("cctv").innerHTML =
+              `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="自动刷新 CCTV 图像" />`;
+          }, 5000);
+        } else {
+          document.getElementById("apiResponse").textContent = "未获取到有效的视频流链接。";
+        }
+      } catch (error) {
+        document.getElementById("apiResponse").textContent = `错误: ${error.message}`;
+      }
+    }
+
+    // 页面加载时调用
+    window.onload = fetchAndDisplayCCTVData;
+  </script>
+</head>
+<body>
+  <h1>交通 CCTV 数据展示</h1>
+  <p id="apiResponse"></p>
+
+  <div id="location"></div>
+  <div id="cctv">
+    <p>等待加载视频流...</p>
+  </div>
+
+  <p>示例：访问页面时使用 URL 参数，如 <code>?cctvId=CCTV-14-0620-017-018</code>。</p>
+</body>
+</html>
