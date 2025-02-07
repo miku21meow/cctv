@@ -24,7 +24,7 @@
         const data = await response.json();
 
         // 获取视频流 URL
-        const videoUrl = data[0]?.VideoStreamURL;
+        const videoUrl = data.CCTVs[0].VideoStreamURL;
 
         if (videoUrl) {
           // 初始化显示视频流图片
