@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自动刷新 API 图片展示</title>
+  <script>
+    // 获取指定的 URL 参数
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 从 API 获取图片链接并设置定时刷新
+    async function fetchAndSetImage() {
+      const apiBaseUrl = "https://miku21meow.github.io/cctv/chatgpt/1.json"; // 替换为实际 API 地址
+      const imageId = getQueryParam("imageId"); // 获取 "imageId" 参数
+
+      if (!imageId) {
+        document.getElementById("apiResponse").textContent = "缺少 imageId 参数。";
+        return;
+      }
+
+      const apiUrl = `${apiBaseUrl}?imageId=${imageId}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("API 请求失败");
+
+        const data = await response.json(); // 假设 API 返回 JSON 数据
+        const imageUrl = data.imageUrl; // 图片链接字段名为 "imageUrl"
+
+        if (imageUrl) {
+          // 初始化图片显示
+          document.getElementById("cctv").innerHTML = `<img src="${imageUrl}" width="426" alt="API 图片加载中" />`;
+
+          // 每隔 5 秒自动刷新图片
+          setInterval(function () {
+            document.getElementById("cctv").innerHTML = 
+              `<img src="${imageUrl}?r=${Math.random()}" width="426" alt="自动刷新图片" />`;
+          }, 5000);
+        }
+      } catch (error) {
+        document.getElementById("apiResponse").textContent = `错误: ${error.message}`;
+      }
+    }
+
+    // 页面加载时调用
+    window.onload = fetchAndSetImage;
+  </script>
+</head>
+<body>
+  <h1>自动刷新 API 图片展示</h1>
+  <p id="apiResponse"></p>
+
+  <div id="cctv">
+    <p>等待加载图片...</p>
+  </div>
+
+  <p>示例：访问页面时添加参数，如 <code>?imageId=12345</code>。</p>
+</body>
+</html>
