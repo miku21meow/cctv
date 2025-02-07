@@ -25,6 +25,7 @@
 
         // 获取视频流 URL
         const videoUrl = data.CCTVs[0].VideoStreamURL;
+        const name = data.CCTV[0].SurveillanceDescription;
 
         if (videoUrl) {
           // 初始化显示视频流图片
