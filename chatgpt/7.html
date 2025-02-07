@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交通 CCTV 视频流展示</title>
+  <script>
+    // 获取 URL 参数
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 从 API 获取图像链接并定时更新
+    async function fetchAndDisplayCCTVVideo() {
+      // 获取传入的监控位置参数
+      const cctvId = getQueryParam("cctvId") || "CCTV-14-0620-017-018";
+      const apiUrl = `https://tdx.transportdata.tw/api/basic/v2/Road/Traffic/CCTV/Highway/${cctvId}?$top=30&$format=JSON`;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("API 请求失败");
+
+        const data = await response.json();
+
+        // 获取视频流 URL
+        const videoUrl = data[0]?.VideoStreamURL;
+
+        if (videoUrl) {
+          // 初始化显示视频流图片
+          document.getElementById("cctv").innerHTML =
+            `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 视频加载中..." />`;
+
+          // 每隔 5 秒刷新图片
+          setInterval(function () {
+            document.getElementById("cctv").innerHTML =
+              `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="自动刷新 CCTV 视频" />`;
+          }, 5000);
+        } else {
+          document.getElementById("apiResponse").textContent = "未获取到有效的视频流链接。";
+        }
+      } catch (error) {
+        document.getElementById("apiResponse").textContent = `错误: ${error.message}`;
+      }
+    }
+
+    // 页面加载时调用
+    window.onload = fetchAndDisplayCCTVVideo;
+  </script>
+</head>
+<body>
+  <h1>交通 CCTV 视频流展示</h1>
+  <p id="apiResponse"></p>
+
+  <div id="cctv">
+    <p>等待加载视频流...</p>
+  </div>
+
+  <p>示例：访问页面时使用 URL 参数，如 <code>?cctvId=CCTV-14-0620-017-018</code>。</p>
+</body>
+</html>
