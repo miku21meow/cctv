@@ -25,7 +25,7 @@
         // 讀取 API 結構中包含 VideoStreamURL 和其他資料
         const cctvData = data[0];
         const videoUrl = data.CCTVs[0].VideoStreamURL;
-        const locationDescription = data.CCTVs[0].CCTVID || "未知位置";
+        const locationDescription = data.CCTVs[0].SurveillanceDescription || "未知位置";
 
         if (videoUrl) {
           // 初始顯示影像及資料
@@ -33,7 +33,7 @@
           document.getElementById("cctv").innerHTML = 
             `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 加載中..." />`;
 
-          // 每隔 29 秒刷新影片
+          // 每隔 29 秒刷新影像
           setInterval(function () {
             document.getElementById("cctv").innerHTML =
               `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV" />`;
@@ -51,7 +51,7 @@
   </script>
 </head>
 <body>
-  <h1>CCTV</h1>
+  <!---<h1>CCTV</h1>--->
   <p id="apiResponse"></p>
 
   <div id="location"></div>
@@ -59,6 +59,6 @@
     <p>等待加載CCTV...</p>
   </div>
 
-  <p>示例：访问页面时使用 URL 参数，如 <code>?cctvId=CCTV-14-0620-017-018</code>。</p>
+  <!---<p>示例：访问页面时使用 URL 参数，如 <code>?cctvId=CCTV-14-0620-017-018</code>。</p>--->
 </body>
 </html>
