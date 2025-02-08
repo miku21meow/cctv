@@ -13,8 +13,9 @@
 
     // 從 API 讀取影像及資料並更新
     async function fetchAndDisplayCCTVData() {
-      const cctvId = getQueryParam("q") || "0";
+      const cctvId = getQueryParam("q1") || "0";
       const apiUrl = `https://miku21meow.github.io/cctv/thb/thb_ok.json`;
+      const q = parseInt(getQueryParam("q")) || 0;
 
       try {
         const response = await fetch(apiUrl);
@@ -24,8 +25,8 @@
 
         // 讀取 API 結構中包含 VideoStreamURL 和其他資料
         const cctvData = data[0];
-        const videoUrl = data.CCTVs[2].VideoStreamURL;
-        const locationDescription = data.CCTVs[2].SurveillanceDescription || "未知位置";
+        const videoUrl = data.CCTVs[q].VideoStreamURL;
+        const locationDescription = data.CCTVs[q].SurveillanceDescription || "未知位置";
 
         if (videoUrl) {
           // 初始顯示影像及資料
