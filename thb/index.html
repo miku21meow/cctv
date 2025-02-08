@@ -31,7 +31,7 @@
 
         if (videoUrl) {
           // 初始顯示影像及資料
-          document.getElementById("version").textContent = `版本：${version}`;
+          document.getElementById("version").textContent = `API版本：${version}`;
           document.getElementById("location").textContent = `位置: ${locationDescription}`;
           document.getElementById("cctv").innerHTML = 
             `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 加載中..." />`;
