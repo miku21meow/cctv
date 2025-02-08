@@ -47,8 +47,7 @@
           document.getElementById("apiResponse").textContent = "未讀取到有效的影像連結。";
         }
       } catch (error) {
-        <!--'document.getElementById("apiResponse").textContent = `錯誤: ${error.message}`;--->
-        document.getElementById("apiResponse").innerHTML = <img src="https://miku21meow.github.io/cctv/thb/error-404.png" width="426" alt="404"><br/>404圖片來源：flaticon(Stickers);
+        document.getElementById("apiResponse").textContent = `錯誤: ${error.message}`;
       }
     }
 
