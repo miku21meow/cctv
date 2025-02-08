@@ -32,7 +32,8 @@
 
         if (videoUrl) {
           // 初始影像及資料
-          document.getElementById("version").textContent = `API版本：${version}<br/>CCTVID:${cctvid}`;
+          document.getElementById("version").textContent = `API版本：${version}`;
+          document.getElementById("cctvid").textContent = `CCTVID：${cctvid}`;
           document.getElementById("location").textContent = `位置: ${locationDescription}`;
           document.getElementById("cctv").innerHTML = 
             `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 載 入 中..." />`;
@@ -63,6 +64,7 @@
     <p>等待加載CCTV...</p>
   </div>
   <div id="version"></div>
+  <div id="cctvid"></div>
   <!---API版本：24.01.1(20250208);網頁版本：V0.9---＞
 
   <!---<p>示例：访问页面时使用 URL 参数，如 <code>?cctvId=CCTV-14-0620-017-018</code>。</p>--->
