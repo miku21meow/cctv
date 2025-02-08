@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCTV</title>
+  <script>
+    // 讀取 URL 參數
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 從 API 讀取影像及資料並更新
+    async function fetchAndDisplayCCTVData() {
+      const cctvId = getQueryParam("q") || "0";
+      const apiUrl = `https://miku21meow.github.io/cctv/thb/thb_ok.json`;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("API 讀取失敗");
+
+        const data = await response.json();
+
+        // 讀取 API 結構中包含 VideoStreamURL 和其他資料
+        const cctvData = data[0];
+        const videoUrl = data.CCTVs[q].VideoStreamURL;
+        const locationDescription = data.CCTVs[q].SurveillanceDescription || "未知位置";
+
+        if (videoUrl) {
+          // 初始顯示影像及資料
+          document.getElementById("location").textContent = `位置: ${locationDescription}`;
+          document.getElementById("cctv").innerHTML = 
+            `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 加載中..." />`;
+
+          // 每隔 29 秒刷新影像
+          setInterval(function () {
+            document.getElementById("cctv").innerHTML =
+              `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV" />`;
+          }, 29000);
+        } else {
+          document.getElementById("apiResponse").textContent = "未讀取到有效的影像連結。";
+        }
+      } catch (error) {
+        document.getElementById("apiResponse").textContent = `錯誤: ${error.message}`;
+      }
+    }
+
+    // 頁面加載時調用
+    window.onload = fetchAndDisplayCCTVData;
+  </script>
+</head>
+<body>
+  <!---<h1>CCTV</h1>--->
+  <p id="apiResponse"></p>
+
+  <div id="location"></div>
+  <div id="cctv">
+    <p>等待加載CCTV...</p>
+  </div>
+
+  <!---<p>示例：访问页面时使用 URL 参数，如 <code>?cctvId=CCTV-14-0620-017-018</code>。</p>--->
+</body>
+</html>
