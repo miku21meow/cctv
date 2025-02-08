@@ -28,15 +28,16 @@
         const videoUrl = data.CCTVs[q].VideoStreamURL;
         const locationDescription = data.CCTVs[q].SurveillanceDescription || "未知位置";
         const version = data.LinkVersion;
+        const cctvid = data.CCTVs[q].CCTVID;
 
         if (videoUrl) {
-          // 初始顯示影像及資料
-          document.getElementById("version").textContent = `API版本：${version}`;
+          // 初始影像及資料
+          document.getElementById("version").textContent = `API版本：${version};ID:${cctvid}`;
           document.getElementById("location").textContent = `位置: ${locationDescription}`;
           document.getElementById("cctv").innerHTML = 
-            `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 加載中..." />`;
+            `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 載 入 中..." />`;
 
-          // 每隔 29 秒刷新影像
+          // 每隔 29 秒更新影像
           setInterval(function () {
             document.getElementById("cctv").innerHTML =
               `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV" />`;
