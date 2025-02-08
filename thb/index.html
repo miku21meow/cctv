@@ -24,8 +24,8 @@
 
         // 讀取 API 結構中包含 VideoStreamURL 和其他資料
         const cctvData = data[0];
-        const videoUrl = data.CCTVs[q].VideoStreamURL;
-        const locationDescription = data.CCTVs[q].SurveillanceDescription || "未知位置";
+        const videoUrl = `data.CCTVs[${q}].VideoStreamURL`;
+        const locationDescription = `data.CCTVs[${q}].SurveillanceDescription || "未知位置"`;
 
         if (videoUrl) {
           // 初始顯示影像及資料
