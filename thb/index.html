@@ -32,7 +32,7 @@
 
         if (videoUrl) {
           // 初始影像及資料
-          document.getElementById("version").textContent = `API版本：${version};ID:${cctvid}`;
+          document.getElementById("version").textContent = `API版本：${version}<br/>CCTVID:${cctvid}`;
           document.getElementById("location").textContent = `位置: ${locationDescription}`;
           document.getElementById("cctv").innerHTML = 
             `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 載 入 中..." />`;
