@@ -10,8 +10,8 @@ async function fetchAndDisplayData() {
   const city = getQueryParam("city"); // JSON 文件名
   const q = getQueryParam("q");   // 讀取的api資料位置
 
-  if (!filename || !dataKey) {
-    document.getElementById("output").textContent = "缺少参数";
+  if (!city || !q) {
+    document.getElementById("school").textContent = "缺少参数";
     return;
   }
 
@@ -28,7 +28,7 @@ async function fetchAndDisplayData() {
     const item = data.Sheet1[q]; // 读取 data.<dataKey>
 
     if (!item || typeof item !== "object") {
-      document.getElementById("output").textContent = "未找到有效資料";
+      document.getElementById("school").textContent = "未找到有效資料";
       return;
     }
 
