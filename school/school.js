@@ -41,9 +41,9 @@ async function fetchAndDisplayData() {
       <p><strong>網址：</strong><a href="${item.url || "#"}" target="_blank">${item.url ? "學校網站" : "無資料"}</a></p>
     `;
 
-    document.getElementById("output").innerHTML = htmlContent;
+    document.getElementById("school").innerHTML = htmlContent;
   } catch (error) {
-    document.getElementById("output").textContent = `錯誤: ${error.message}`;
+    document.getElementById("school").textContent = `錯誤: ${error.message}`;
   }
 }
 
