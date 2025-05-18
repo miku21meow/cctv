@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>新北即時影像</title>
+  <script src="https://cdn.jsdelivr.net/npm/flv.js@latest/dist/flv.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    video { width: 720px; height: 400px; background: black; display: none; }
+    img#errorImage { display: none; width: 400px; }
+    #info { margin-top: 10px; font-size: 18px; }
+  </style>
+</head>
+<body>
+
+<video id="videoElement" controls></video>
+<img id="errorImage" src="https://miku21meow.github.io/cctv/thb/novideo.jpg" alt="找不到資料">
+<div id="info">載入中...</div>
+
+<script>
+  function getParam(key) {
+    return new URLSearchParams(window.location.search).get(key);
+  }
+
+  const id = getParam("data");
+  if (!id) {
+    showError("缺少參數");
+    return;
+  }
+
+  const apiUrl = `https://apiatis.ntpc.gov.tw/atis-api/device/queryCCTVURL/${id}`;
+
+  fetch(apiUrl)
+    .then(res => {
+      if (!res.ok) throw new Error("HTTP error " + res.status);
+      return res.json();
+    })
+    .then(data => {
+      if (!data.data.url || !data.data.deviceId) throw new Error("JSON 欄位不完整");
+
+      document.getElementById("info").innerText = `ID: ${data.data.deviceId}`;
+      const video = document.getElementById("videoElement");
+      video.style.display = "block";
+
+      if (flvjs.isSupported()) {
+        const flvPlayer = flvjs.createPlayer({
+          type: 'flv',
+          url: data.data.url
+        });
+        flvPlayer.attachMediaElement(video);
+        flvPlayer.load();
+        flvPlayer.play();
+      } else {
+        showError("不支援 FLV 播放");
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showError("載入失敗");
+    });
+
+  function showError(msg) {
+    document.getElementById("info").innerText = msg;
+    document.getElementById("videoElement").style.display = "none";
+    document.getElementById("errorImage").style.display = "inline-block";
+  }
+</script>
+
+</body>
+</html>
