@@ -7,6 +7,12 @@
   <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@1.0.2/dist/videojs-flvjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js"></script>
+
+  <link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+  <script src="https://unpkg.com/video.js/dist/video.min.js"></script>
+  <script src="https://unpkg.com/flv.js/dist/flv.min.js"></script>
+  <script src="https://unpkg.com/videojs-flvjs/dist/videojs-flvjs.min.js"></script>
+  
   <style>
     body { font-family: sans-serif; text-align: center; padding: 20px; }
     #error-img { display: none; max-width: 100%; }
@@ -16,6 +22,8 @@
 
   <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360"></video>
   <div id="stream-id" style="margin-top: 10px; font-size: 18px;"></div>
+    <div id="cctv">
+     </div>
   <img id="error-img" src="https://miku21meow.github.io/cctv/thb/novideo.jpg" alt="404 Not Found">
 
   <script>
@@ -45,6 +53,22 @@
         document.getElementById('stream-id').style.display = 'none';
         document.getElementById('error-img').style.display = 'block';
       });
+
+    document.getElementById("cctv").innerHTML =
+            `<video id="videojs-flvjs-player" class="video-js" controls>
+    <source src="${data.data.url}" type='video/x-flv'>
+  </video>`;
+
+    
+        (function(window, videojs) {
+      // Setting the techOrder is necessary in 5.x
+      // In 6.x techs are added automatically
+      var player = window.player = videojs('videojs-flvjs-player', {
+      //  techOrder: ['html5', 'flvjs']
+      });
+    }(window, window.videojs));
+
+    
   </script>
 </body>
 </html>
