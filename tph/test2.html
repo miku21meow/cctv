@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>FLV 播放器</title>
+  <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/videojs-flvjs@1.0.2/dist/videojs-flvjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flv.js/dist/flv.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    #error-img { display: none; max-width: 100%; }
+  </style>
+</head>
+<body>
+
+  <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360"></video>
+  <div id="stream-id" style="margin-top: 10px; font-size: 18px;"></div>
+  <img id="error-img" src="https://miku21meow.github.io/cctv/thb/novideo.jpg" alt="404 Not Found">
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const streamName = params.get('stream');
+    const apiUrl = `https://apiatis.ntpc.gov.tw/atis-api/device/queryCCTVURL/${streamName}`;
+
+    fetch(apiUrl)
+      .then(response => {
+        if (!response.ok) throw new Error("404");
+        return response.json();
+      })
+      .then(data => {
+        const video = videojs('my-video', {
+          techOrder: ['flvjs'],
+          sources: [{
+            src: data.data.url,
+            type: 'video/x-flv'
+          }],
+          autoplay: true
+        });
+
+        document.getElementById('stream-id').textContent = `ID: ${data.data.deviceId}`;
+      })
+      .catch(err => {
+        document.getElementById('my-video').style.display = 'none';
+        document.getElementById('stream-id').style.display = 'none';
+        document.getElementById('error-img').style.display = 'block';
+      });
+  </script>
+</body>
+</html>
