@@ -11,8 +11,6 @@
       text-align: center;
     }
     #videojs-flvjs-player, #fallback-image {
-      max-width: 100%;
-      height: ;
       margin: auto;
       display: block;
     }
@@ -47,7 +45,16 @@
       }
 
       const id = getQueryParam('id');
+      const width = getQueryParam('width');
+      const height = getQueryParam('height');
       const apiUrl = `https://apiatis.ntpc.gov.tw/atis-api/device/queryCCTVURL/${id}`;
+
+      const videoElement = document.getElementById('videojs-flvjs-player');
+      if (width) videoElement.style.width = `${width}px`;
+      else videoElement.style.width = '100%';
+
+      if (height) videoElement.style.height = `${height}px`;
+      else videoElement.style.height = '';
 
       fetch(apiUrl)
         .then(response => response.json())
@@ -58,11 +65,10 @@
 
             document.getElementById('device-info').textContent = `設備ID：${deviceId}`;
 
-            const video = document.getElementById('videojs-flvjs-player');
             const source = document.getElementById('video-source');
             source.src = videoUrl;
-            video.load();
-            videojs(video, { techOrder: ['html5', 'flvjs'] });
+            videoElement.load();
+            videojs(videoElement, { techOrder: ['html5', 'flvjs'] });
           } else {
             showFallback();
           }
@@ -73,7 +79,7 @@
         });
 
       function showFallback() {
-        document.getElementById('videojs-flvjs-player').style.display = 'none';
+        videoElement.style.display = 'none';
         document.getElementById('fallback-image').style.display = 'block';
         document.getElementById('device-info').textContent = '';
       }
