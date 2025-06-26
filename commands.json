@@ -1,0 +1,14 @@
+{
+  "whoami": "fakeuser",
+  "date": "Thu Jun 26 2025 13:00:00 UTC",
+  "help": "支援指令：ls, pwd, cd <dir>, cat <file>, mkdir <dir>, touch <file>, clear, help, whoami, date",
+  "dirs": {
+    "/home": ["fakeuser"],
+    "/home/fakeuser": ["docs", "downloads", "readme.txt"],
+    "/home/fakeuser/docs": ["intro.txt"]
+  },
+  "files": {
+    "/home/fakeuser/readme.txt": "這是 readme.txt 的內容\n歡迎使用模擬終端機！",
+    "/home/fakeuser/docs/intro.txt": "這是 docs/intro.txt 的模擬文件\n包含基本教學。"
+  }
+}

@@ -1,1 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>模擬 SSH 終端</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: monospace;
+      margin: 0;
+      padding: 10px;
+    }
+    #terminal {
+      white-space: pre-wrap;
+      min-height: 90vh;
+    }
+    .prompt-line {
+      display: flex;
+    }
+    .prompt {
+      color: #0f0;
+    }
+    input {
+      background: transparent;
+      color: #0f0;
+      border: none;
+      outline: none;
+      flex-grow: 1;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal">
+    <div>> 歡迎使用模擬 SSH 終端機，請輸入指令。</div>
+  </div>
+  <div class="prompt-line">
+    <span class="prompt" id="prompt">user@fake-ssh:~$ </span>
+    <input id="commandInput" autofocus />
+  </div>
 
+  <script>
+    const terminal = document.getElementById('terminal');
+    const input = document.getElementById('commandInput');
+    const promptSpan = document.getElementById('prompt');
+    let history = [];
+    let historyIndex = -1;
+    let commands = {};
+    let currentPath = '/home/fakeuser';
+
+    fetch('commands.json')
+      .then(res => res.json())
+      .then(json => { commands = json; })
+      .catch(() => appendOutput('無法載入指令資料 commands.json'));
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        const command = input.value.trim();
+        if (!command) return;
+
+        appendOutput(`user@fake-ssh:${currentPath}$ ${command}`);
+        history.push(command);
+        historyIndex = history.length;
+        input.value = '';
+
+        handleCommand(command);
+        scrollToBottom();
+      }
+
+      if (e.key === 'ArrowUp') {
+        if (historyIndex > 0) {
+          historyIndex--;
+          input.value = history[historyIndex];
+        }
+        e.preventDefault();
+      } else if (e.key === 'ArrowDown') {
+        if (historyIndex < history.length - 1) {
+          historyIndex++;
+          input.value = history[historyIndex];
+        } else {
+          input.value = '';
+          historyIndex = history.length;
+        }
+        e.preventDefault();
+      }
+    });
+
+    function handleCommand(command) {
+      if (command === 'clear') {
+        terminal.innerHTML = '';
+        return;
+      }
+
+      if (command === 'pwd') {
+        appendOutput(currentPath);
+        return;
+      }
+
+      if (command.startsWith('cd ')) {
+        const target = command.slice(3).trim();
+        if (target === '..') {
+          if (currentPath !== '/home') {
+            currentPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+          }
+        } else if (commands['dirs'][currentPath] && commands['dirs'][currentPath].includes(target)) {
+          currentPath = currentPath + '/' + target;
+        } else {
+          appendOutput(`cd: ${target}: No such directory`);
+        }
+        updatePrompt();
+        return;
+      }
+
+      if (command === 'ls') {
+        const files = commands['dirs'][currentPath] || [];
+        appendOutput(files.join('  '));
+        return;
+      }
+
+      if (command.startsWith('cat ')) {
+        const file = command.slice(4);
+        if (commands['files'][currentPath + '/' + file]) {
+          appendOutput(commands['files'][currentPath + '/' + file]);
+        } else {
+          appendOutput(`cat: ${file}: No such file`);
+        }
+        return;
+      }
+
+      if (commands[command]) {
+        appendOutput(commands[command]);
+      } else {
+        appendOutput(`${command}: command not found`);
+      }
+    }
+
+    function appendOutput(text) {
+      const line = document.createElement('div');
+      line.textContent = text;
+      terminal.appendChild(line);
+    }
+
+    function scrollToBottom() {
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function updatePrompt() {
+      promptSpan.textContent = `user@fake-ssh:${currentPath}$ `;
+    }
+  
+    if (command.startsWith('mkdir ')) {
+      const dirName = command.slice(6).trim();
+      if (!dirName) {
+        appendOutput('mkdir: missing operand');
+        return;
+      }
+      if (!commands['dirs'][currentPath]) commands['dirs'][currentPath] = [];
+      if (!commands['dirs'][currentPath].includes(dirName)) {
+        commands['dirs'][currentPath].push(dirName);
+        const newPath = currentPath + '/' + dirName;
+        commands['dirs'][newPath] = [];
+      } else {
+        appendOutput(`mkdir: cannot create directory ‘${dirName}’: File exists`);
+      }
+      return;
+    }
+
+    if (command.startsWith('touch ')) {
+      const fileName = command.slice(6).trim();
+      if (!fileName) {
+        appendOutput('touch: missing file operand');
+        return;
+      }
+      if (!commands['dirs'][currentPath]) commands['dirs'][currentPath] = [];
+      if (!commands['dirs'][currentPath].includes(fileName)) {
+        commands['dirs'][currentPath].push(fileName);
+        commands['files'][currentPath + '/' + fileName] = '';
+      }
+      return;
+    }
+  </script>
+</body>
+</html>
