@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCTV</title>
+  <script>
+    // 讀取 URL 參數
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    // 從 API 讀取資料
+    async function fetchAndDisplayCCTVData() {
+      const q = parseInt(getQueryParam("q")) || 0;
+      const apiUrl = "https://miku21meow.github.io/cctv/thb/thb_ok_11.json";
+      const fallback404Image = "https://miku21meow.github.io/cctv/thb/novideo.jpg"; // 404 圖片
+      const noSignalImage = "https://miku21meow.github.io/cctv/thb/novideo.jpg"; // 無信號圖片
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error("API 讀取失敗");
+
+        const data = await response.json();
+
+        // 讀取指定位置的資料
+        const cctvData = data[0];
+        const videoUrl = data.CCTVs[q].VideoStreamURL;
+        const locationDescription = data.CCTVs[q].SurveillanceDescription || "未知位置";
+        const version = data.LinkVersion;
+        const cctvid = data.CCTVs[q].CCTVID;
+
+        if (videoUrl) {
+          // 初始化圖片
+          document.getElementById("version").textContent = `API版本：${version}`;
+          document.getElementById("cctvid").textContent = `CCTVID：${cctvid}`;
+          document.getElementById("location").textContent = `位置: ${locationDescription}`;
+          document.getElementById("cctv").innerHTML =
+            `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV 載入中..." 
+              onerror="this.src='${fallback404Image}'" />`;
+
+          // 自動更新圖片
+          setInterval(function () {
+            document.getElementById("cctv").innerHTML =
+              `<img src="${videoUrl}?r=${Math.random()}" width="426" alt="CCTV" 
+              onerror="this.src='${noSignalImage}'" />`;
+          }, 29000);
+        } else {
+          document.getElementById("cctv").innerHTML =
+            `<img src="${noSignalImage}" alt="未讀取到圖片資料" width="426" />`;
+        }
+      } catch (error) {
+        document.getElementById("cctv").innerHTML =
+          `<img src="${fallback404Image}" alt="錯誤: ${error.message}" width="426" />`;
+      }
+    }
+
+    // 載入時調用
+    window.onload = fetchAndDisplayCCTVData;
+  </script>
+  <style>
+    /* 隱藏 API  */
+    #apiResponse {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+    <p id="apiResponse"></p>
+
+  <div id="location"></div>
+  <div id="cctv">
+    <p>等待加載CCTV...</p>
+  </div>
+  <div id="version"></div>
+  <div id="cctvid"></div>
+  <!---API版本：25.06.1(20251026);網頁版本：V2---＞
+</body>
+</html>
